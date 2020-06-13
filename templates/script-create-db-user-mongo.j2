@@ -1,0 +1,11 @@
+use {{ general_config_mongodb.database_name }}
+ 
+db.createUser(
+  {
+    user: "{{ general_config_mongodb.username }}",
+    pwd: "{{ general_config_mongodb.password }}",
+    roles: [ { role: "readWrite", db: "{{ general_config_mongodb.database_name }}" } ]
+  }
+)
+
+db.movie.insert({"name":"tutorials point"})

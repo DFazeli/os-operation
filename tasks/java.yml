@@ -1,0 +1,13 @@
+---
+
+- name: --- install java ---
+  yum: 
+    name: java
+    state: present
+
+- name: --- Set Java Home ----
+  shell: |
+   unset JAVA_HOME
+   echo '# if java version is jdk1.8.0_202-amd64' | tee -a /etc/profile
+   echo 'export JAVA_HOME=/usr/java/jdk1.8.0_231-amd64/jre' | tee -a /etc/profile
+   source /etc/profile

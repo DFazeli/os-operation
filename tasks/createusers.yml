@@ -1,0 +1,58 @@
+---
+
+- name: ---- Create user Operation ---
+  shell: |
+      useradd {{ item.value.name }}
+      echo  "{{ item.value.passwd }}" | passwd --stdin {{ item.value.name }}
+      usermod -aG wheel {{ item.value.name }}
+  with_dict: "{{ users }}"
+  when: "{{ general_config.createusers }}"
+  tags:
+    - createusers
+
+
+- name: ---- Set TimeZone to Asia/Tehran -----
+  shell: |
+     timedatectl set-timezone Asia/Tehran
+     systemctl restart chronyd
+
+- name: --- Config command prompt ---
+  blockinfile:
+    path: /etc/profile
+    state: present
+    block: |
+      IPADDR=$(ip addr  | grep "inet " | cut -d" " -f6 | sed s'/\/.*//' | grep  "^192.168.0")
+      export PROMPT_COMMAND='RETRN_VAL=$?;logger -p local6.debug "$(whoami) [$$]: $(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"'
+      export PS1="\[\e[34;40m\]\w\n\[\e[m\]\[\e[33;40m\]\d\[\e[m\]\[\e[33;40m\] \[\e[m\]\[\e[33;40m\]\T\[\e[m\]\n\[\e[31;40m\]\u\[\e[m\]@\[\e[32;40m\]\h\[\e[m\] $IPADDR \\$ >> "
+
+- name: --- config dns server /etc/resolve -----------
+  shell: |
+     echo 'nameserver 192.168.0.5' | tee -a /etc/resolv.conf
+     echo 'nameserver 192.168.0.25' | tee -a /etc/resolv.conf
+     source /etc/profile
+  when: "{{ general_config.setdns }}"
+  tags:
+    - setdns
+
+- name: --- Tune TCP ----
+  blockinfile:
+    path: /etc/sysctl.conf
+    state: present
+    block: |
+      net.core.rmem_max=8388608
+      net.core.wmem_max=8388608
+      net.core.rmem_default=65536
+      net.core.wmem_default=65536
+      net.ipv4.tcp_rmem=4096 87380 8388608
+      net.ipv4.tcp_wmem=4096 65536 8388608
+      net.ipv4.tcp_mem=8388608 8388608 8388608
+      net.ipv4.route.flush=1
+  when: "{{ general_config.tunetcp }}"
+
+- name: ---- Disable ipv6 ----
+  shell: |
+    echo "net.ipv6.conf.all.disable_ipv6 = 1" | tee -a /etc/sysctl.conf
+    echo "net.ipv6.conf.default.disable_ipv6 = 1" | tee -a /etc/sysctl.conf
+    sysctl -p  
+
+    

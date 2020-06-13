@@ -1,0 +1,50 @@
+---
+- block:
+  - name: --- mv old repo ---
+    shell: |
+       mkdir /etc/yum.repos.d/old_repo
+       cd /etc/yum.repos.d/
+       mv `ls -p | grep -v \/` old_repo/
+    when: "{{ general_config.createRepo }}"
+    ignore_errors: true   
+    tags:
+       - repo
+
+  - name: -- craete file repository ---
+    shell: touch /etc/yum.repos.d/{{ general_config.RepoFileName }}.repo
+    when: "{{ general_config.createRepo }}"
+    tags:
+        - repo
+
+  - name: --- config repository ---
+    lineinfile:
+       dest: "/etc/yum.repos.d/{{ general_config.RepoFileName }}.repo"
+       line: |
+         [{{ item.value.title_repo}}]
+         name= {{ item.value.name }}
+         baseurl= {{ item.value.baseurl }}
+         gpgcheck= {{ item.value.gpgcheck }}
+         enabled= {{ item.value.enable }}
+    with_dict: "{{ repository }}"
+    when: "{{ general_config.createRepo }}"
+    tags:
+        - repo      
+
+  - name: --- refresh repolist ---
+    shell: |
+       yum clean all
+       rm -fr /var/cache/yum/
+    when: "{{ general_config.createRepo }}"   
+  
+  - include_tasks: install-package.yml
+    when: "{{general_config.package_install}}"
+    tags:
+      - package_install
+  
+  - include_tasks: createusers.yml
+    when: "{{general_config.createusers}}"
+    tags:
+       - createusers
+
+  become: yes
+

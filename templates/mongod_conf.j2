@@ -1,0 +1,48 @@
+# mongod.conf
+
+# for documentation of all options, see:
+#   http://docs.mongodb.org/manual/reference/configuration-options/
+
+# where to write logging data.
+systemLog:
+  destination: file
+  logAppend: true
+  path: {{ general_config_mongodb.logpath }}
+
+# Where and how to store data.
+storage:
+  dbPath: {{ general_config_mongodb.dbpath }}
+  journal:
+    enabled: true
+#  engine:
+#  mmapv1:
+  wiredTiger:
+    engineConfig:
+       cacheSizeGB: {{general_config_mongodb.wiredTiger_engineConfig_cacheSizeGB}}
+
+# how the process runs
+processManagement:
+  fork: true  # fork and run in background
+  pidFilePath: {{ general_config_mongodb.pidfilepath }}  # location of pidfile
+  timeZoneInfo: /usr/share/zoneinfo
+
+replication:
+  replSetName: {{ general_config_mongodb.replsetname }}
+
+# network interfaces
+net:
+  port: 27017
+{% for host in elasticsearch_nodes %}{% if ansible_env.SSH_CONNECTION.split(' ')[2] == elasticsearch_nodes[host].ssh_ip %}  bindIp: 127.0.0.1,{{ elasticsearch_nodes[host].hostname }}{{ elasticsearch_nodes[host].id }}{% endif %}{% endfor %}
+
+
+#security:
+
+#operationProfiling:
+
+#sharding:
+
+## Enterprise-Only Options
+
+#auditLog:
+
+#snmp:

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#primary=$(echo 'db.runCommand("ismaster")' | mongo | grep primary | awk -F: '{print $2}' | sed 's/^..//')
+
+echo  'db.runCommand("ismaster")' | mongo | grep primary | awk -F: '{print $2}' | sed 's/^..//'
+
+#echo "$primary"

@@ -1,0 +1,12 @@
+{% if general_config.cluster_status == true %}
+config = { _id: "{{ general_config_mongodb.replsetname }}", members:[
+{% for host in mongodb_nodes %}
+        { "_id" : {{ mongodb_nodes[host].id }}, host : "{{ mongodb_nodes[host].hostname }}{{ mongodb_nodes[host].id }}:{{ mongodb_nodes[host].port }}"},
+{% endfor %}
+]};
+{% endif %}
+rs.initiate(config); 
+
+ 
+ 
+
