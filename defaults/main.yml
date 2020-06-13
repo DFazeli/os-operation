@@ -4,7 +4,7 @@ general_config:
   java_installation: true
   ntp_installation: false
   createRepo: true
-  domain_repository: repository.pdc.kpp.local
+  domain_repository: repository.local
   ip_repository: 192.168.245.10
   RepoFileName: ansible
   selinux: false
@@ -29,7 +29,7 @@ repository:
 #     id: 2
 #     title_repo: ansible_nginx
 #     name: ansible_nginx
-#     baseurl: "http://{{ general_config.domain_repository }}/repo/nginxRepo"
+#     baseurl: "http://{{ general_config.domain_repository }}"
 #     gpgcheck: 0
 #     enable: 1 
 #  
@@ -37,7 +37,7 @@ repository:
 #     id: 3
 #     title_repo: ansible_mon_packages
 #     name: ansible_mon_packages
-#     baseurl: "http://{{ general_config.domain_repository }}/repo/mon-packages"
+#     baseurl: "http://{{ general_config.domain_repository }}"
 #     gpgcheck: 0
 #     enable: 1 
 #  
@@ -45,7 +45,7 @@ repository:
 #     id: 4
 #     title_repo: ansible_java
 #     name: ansible_java_jdk
-#     baseurl: "http://{{ general_config.domain_repository }}/repo/java"
+#     baseurl: "http://{{ general_config.domain_repository }}"
 #     gpgcheck: 0
 #     enable: 1 
 #
@@ -78,14 +78,14 @@ firewalld_direct_rules:
 # ---------------------- List User that we want create --------------------
 users:
   user1:
-    name: rahimi
-    passwd: r123456& 
+    name: username1
+    passwd: p123456
   user2:
-    name: sharifi
-    passwd: sh123456&
+    name: username2
+    passwd: p123456
   user3:
-    name: aghanassir
-    passwd: a123456&
+    name: username3
+    passwd: p123456
     
  
 
