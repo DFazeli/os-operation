@@ -3,7 +3,7 @@
 
 
 {% for host in chrony_servers %}
-   server {{chrony_servers[host].ip}} iburst
+   server {{chrony_servers[host].dns}} iburst
 {% endfor %}
 
 

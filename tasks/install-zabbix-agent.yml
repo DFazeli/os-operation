@@ -1,0 +1,36 @@
+---
+
+- name: --- install zabbix-agent ---
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+       - "zabbix-agent"
+  when: "{{ general_config.install_package }}"
+  tags:
+    - install_package
+
+# ------------- Config zabbix-agent ----------------------
+- name: ----- config zabbix-agent -------------
+  template: src=zabbix-agent.config.j2 dest=/etc/zabbix/zabbix_agentd.conf
+  notify:
+    - restart zabbix-agent
+
+# ------------- Config UserParameter ----------------------    
+- name: ----- config  UserParameter -------------
+  blockinfile:
+       path: /etc/zabbix/zabbix_agentd.conf
+       marker: "#-----------------"
+       insertafter: '# UserParameter='
+       state: present
+       block: |
+         UserParameter= TelnetCheck[*],echo quit | timeout 4 telnet '$1' '$2'  2>&1 | grep Connected | wc -l
+         UserParameter= systemd.unit.is-active[*],systemctl is-active --quiet '$1' && echo 1 || echo 0
+         UserParameter= systemd.unit.is-failed[*],systemctl is-failed --quiet '$1' && echo 1 || echo 0
+         UserParameter= systemd.unit.is-enabled[*],systemctl is-enabled --quiet '$1' && echo 1 || echo 0
+         UserParameter= ESTABCountKey, netstat -nap | grep -i "ESTABLISHED" | wc -l
+         UserParameter= TIME_WAITCountKey, netstat -nap | grep -i "TIME_WAIT" | wc -l
+         UserParameter= CLOSE_WAITCountKey, netstat -nap | grep -i "CLOSE_WAIT" | wc -l
+         UserParameter= CLOSINGCountKey, netstat -nap | grep -i "CLOSING" | wc -l
+  notify:
+    - restart zabbix-agent  

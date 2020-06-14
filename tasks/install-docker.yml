@@ -1,0 +1,25 @@
+---
+
+- name: --- install docker ---
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+       - "docker-ce*"
+       - "containerd.io"
+  tags:
+    - install_docker
+  notify:
+    - restart docker
+
+- name: ---- Add Users for Manage Docker ---------
+  shell: |
+     usermod -aG docker {{ item.value.name }}
+  with_dict: "{{ dockerusers }}"
+  
+- name: --- install docker-compose ---
+  shell: |
+     wget {{general_config.domain_repository}}/docker-compose -O /usr/local/bin/docker-compose    
+     chmod +x /usr/local/bin/docker-compose
+  when: "{{ general_config.install_docker}}"
+

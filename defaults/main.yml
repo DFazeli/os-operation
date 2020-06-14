@@ -1,20 +1,24 @@
 ---
 
 general_config:
-  java_installation: true
-  ntp_installation: false
-  createRepo: true
+  create_repo: true
   domain_repository: repository.pdc.kpp.local
   ip_repository: 192.168.245.10
   RepoFileName: ansible
+  disableipv6: true
   selinux: false
   firewalld: false
   firewalld_rich_rules: true
   firewalld_direct_rules: true
-  createusers: true
-  package_install: true
+  create_users: true
   setdns: true
   tunetcp: true
+  network_config: true
+  install_zabbix_agent: true
+  install_java: true
+  install_chrony: true
+  install_package: true
+  install_docker: true
 
 repository:
   repo1:
@@ -55,6 +59,7 @@ repository:
 chrony_servers:
     server1:
         ip: 172.16.5.34
+        dns: time.bm
 
 #  ---------------List of IPs that we want to be open ----------------
 firewalld_rich_rules:
@@ -78,14 +83,38 @@ firewalld_direct_rules:
 # ---------------------- List User that we want create --------------------
 users:
   user1:
-    name: rahimi
+    name: user1
     passwd: r123456& 
   user2:
-    name: sharifi
+    name: user2
     passwd: sh123456&
   user3:
-    name: aghanassir
+    name: user3
     passwd: a123456&
+# --------------------- User for manage Docker --------------------------
+dockerusers:
+        user1:
+          name: user1
+        user2:
+          name: user2
+        user3:
+          name: user3
+# -------------------- zabbix-agnet config ------------------------------
+zabbix_agnet_config:
+   Server: 172.26.89.29
+   SourceIP: 172.26.89.29
+   ServerActive: 172.26.89.29
+   ListenPort: 10050
+   Timeout: 30
+   EnableRemoteCommands: 0
+   StartAgents: 3
+   AllowRoot: 0
+   Include: /etc/zabbix/zabbix_agentd.d/*.conf
+   UnsafeUserParameters: 0
+
+# ----------------------- Zabbix-agent UserParameters -----------------------
+
+   
     
  
 

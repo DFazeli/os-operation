@@ -5,22 +5,17 @@
     name: "{{ item }}"
     state: present
   with_items:
-       - "chrony"
        - "telnet"
        - "nmap-ncat"
-       - "lwraper"
+       - "rlwrap"
        - "bash-completion"
        - "unzip"
        - "yum-utils"
-       - "zabbix-agent"
        - "jq"
        - "filebeat"
        - "bind-utils"
        - "wget"
        - "net-tools"
-  when: "{{ general_config.package_install }}"
   tags:
     - package_install 
-
-
 

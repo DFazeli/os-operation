@@ -1,20 +1,10 @@
 ---
 
-- name: ---- Create user Operation ---
-  shell: |
-      useradd {{ item.value.name }}
-      echo  "{{ item.value.passwd }}" | passwd --stdin {{ item.value.name }}
-      usermod -aG wheel {{ item.value.name }}
-  with_dict: "{{ users }}"
-  when: "{{ general_config.createusers }}"
-  tags:
-    - createusers
-
-
 - name: ---- Set TimeZone to Asia/Tehran -----
   shell: |
      timedatectl set-timezone Asia/Tehran
-     systemctl restart chronyd
+  notify:
+    - restart chronyd
 
 - name: --- Config command prompt ---
   blockinfile:
@@ -53,6 +43,5 @@
   shell: |
     echo "net.ipv6.conf.all.disable_ipv6 = 1" | tee -a /etc/sysctl.conf
     echo "net.ipv6.conf.default.disable_ipv6 = 1" | tee -a /etc/sysctl.conf
-    sysctl -p  
-
-    
+    sysctl -p
+  when: "{{ general_config.disableipv6 }}"    

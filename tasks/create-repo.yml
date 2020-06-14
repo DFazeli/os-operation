@@ -1,0 +1,34 @@
+---
+
+  - name: --- mv old repo ---
+    shell: |
+       mkdir /etc/yum.repos.d/old_repo
+       cd /etc/yum.repos.d/
+       mv `ls -p | grep -v \/` old_repo/
+    ignore_errors: true   
+    tags:
+       - repo
+
+  - name: -- craete file repository ---
+    shell: touch /etc/yum.repos.d/{{ general_config.RepoFileName }}.repo
+    tags:
+        - repo
+
+  - name: --- config repository ---
+    lineinfile:
+       dest: "/etc/yum.repos.d/{{ general_config.RepoFileName }}.repo"
+       line: |
+         [{{ item.value.title_repo}}]
+         name= {{ item.value.name }}
+         baseurl= {{ item.value.baseurl }}
+         gpgcheck= {{ item.value.gpgcheck }}
+         enabled= {{ item.value.enable }}
+    with_dict: "{{ repository }}"
+    tags:
+        - repo      
+
+  - name: --- refresh repolist ---
+    shell: |
+       yum clean all
+       rm -fr /var/cache/yum/
+    

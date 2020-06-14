@@ -1,0 +1,11 @@
+---
+
+- name: ---- Create user Operation ---
+  shell: |
+      useradd {{ item.value.name }}
+      echo  "{{ item.value.passwd }}" | passwd --stdin {{ item.value.name }}
+      usermod -aG wheel {{ item.value.name }}
+  with_dict: "{{ users }}"
+  when: "{{ general_config.create_users }}"
+  tags:
+    - create_users

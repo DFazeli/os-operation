@@ -1,50 +1,46 @@
 ---
 - block:
-  - name: --- mv old repo ---
-    shell: |
-       mkdir /etc/yum.repos.d/old_repo
-       cd /etc/yum.repos.d/
-       mv `ls -p | grep -v \/` old_repo/
-    when: "{{ general_config.createRepo }}"
-    ignore_errors: true   
+  
+  - include_tasks: create-repo.yml
+    when: "{{ general_config.create_repo }}"
     tags:
-       - repo
-
-  - name: -- craete file repository ---
-    shell: touch /etc/yum.repos.d/{{ general_config.RepoFileName }}.repo
-    when: "{{ general_config.createRepo }}"
-    tags:
-        - repo
-
-  - name: --- config repository ---
-    lineinfile:
-       dest: "/etc/yum.repos.d/{{ general_config.RepoFileName }}.repo"
-       line: |
-         [{{ item.value.title_repo}}]
-         name= {{ item.value.name }}
-         baseurl= {{ item.value.baseurl }}
-         gpgcheck= {{ item.value.gpgcheck }}
-         enabled= {{ item.value.enable }}
-    with_dict: "{{ repository }}"
-    when: "{{ general_config.createRepo }}"
-    tags:
-        - repo      
-
-  - name: --- refresh repolist ---
-    shell: |
-       yum clean all
-       rm -fr /var/cache/yum/
-    when: "{{ general_config.createRepo }}"   
+      - create_repo
   
   - include_tasks: install-package.yml
-    when: "{{general_config.package_install}}"
+    when: "{{general_config.install_package}}"
     tags:
       - package_install
   
-  - include_tasks: createusers.yml
-    when: "{{general_config.createusers}}"
+  - include_tasks: create-users.yml
+    when: "{{general_config.create_users}}"
     tags:
-       - createusers
+       - create_users
+
+  - include_tasks: network-config.yml
+    when: "{{ general_config.network_config }}"
+    tags:
+      - network_config
+
+  - include_tasks: install-zabbix-agent.yml
+    when: "{{ general_config.install_zabbix_agent }}"
+    tags:
+      - install_zabbix_agent
+
+  - include_tasks:  install-java.yml
+    when: "{{ general_config.install_java }}"
+    tags:
+      - install_java
+  
+  - include_tasks: install-docker.yml
+    when: "{{ general_config.install_docker }}"
+    tags:
+      - install_docker
+
+  - include_tasks: install-chronyd.yml
+    when: "{{ general_config.install_chrony }}"
+    tags:
+      - install_chrony
+  
 
   become: yes
 
