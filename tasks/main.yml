@@ -1,6 +1,11 @@
 ---
 - block:
   
+  - include_tasks: update-kernel.yml
+    when: "{{ general_config.update_kernel }}"
+    tags:
+      - update_kernel
+      
   - include_tasks: create-repo.yml
     when: "{{ general_config.create_repo }}"
     tags:

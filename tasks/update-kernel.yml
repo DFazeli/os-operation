@@ -1,6 +1,10 @@
 ---
 
-- name: --- install chronyd ---
+
+- name: ---- yum update ----
+  yum: name=* state=latest
+
+- name: --- update kernel-ml ---
   yum:
     name: "{{ item }}"
     state: present
@@ -10,7 +14,7 @@
   tags:
     - update_kernel
 
-- name: --- install chronyd ---
+- name: --- kernel-headers, kernel-tools-libs, kernel-ml-tools ---
   shell: |
      yum -y swap kernel-headers -- kernel-ml-headers
      yum -y swap kernel-tools-libs -- kernel-ml-tools-libs
