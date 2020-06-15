@@ -2,10 +2,10 @@
 
   - name: --- add bind repo url to repo ip ---
     blockinfile:
-    path: /etc/hosts
-    state: present
-    block: |
-        {{ general_config.ip_repository }} {{ general_config.domain_repository }}
+      path: /etc/hosts
+      state: present
+      block: |
+         {{ general_config.ip_repository }} {{ general_config.domain_repository }}
 
   - name: --- mv old repo ---
     shell: |

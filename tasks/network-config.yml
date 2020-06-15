@@ -11,15 +11,16 @@
     path: /etc/profile
     state: present
     block: |
-      IPADDR=$(ip addr  | grep "inet " | cut -d" " -f6 | sed s'/\/.*//' | grep  "^192.168.0")
+      IPADDR=$(ip addr  | grep "inet " | cut -d" " -f6 | sed s'/\/.*//' | grep  "^172.26.89")
       export PROMPT_COMMAND='RETRN_VAL=$?;logger -p local6.debug "$(whoami) [$$]: $(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" ) [$RETRN_VAL]"'
       export PS1="\[\e[34;40m\]\w\n\[\e[m\]\[\e[33;40m\]\d\[\e[m\]\[\e[33;40m\] \[\e[m\]\[\e[33;40m\]\T\[\e[m\]\n\[\e[31;40m\]\u\[\e[m\]@\[\e[32;40m\]\h\[\e[m\] $IPADDR \\$ >> "
 
-- name: --- config dns server /etc/resolve -----------
-  shell: |
-     echo 'nameserver 192.168.0.5' | tee -a /etc/resolv.conf
-     echo 'nameserver 192.168.0.25' | tee -a /etc/resolv.conf
-     source /etc/profile
+- name: --- config dns server /etc/resolv.conf -----------
+  lineinfile:
+       dest: /etc/resolv.conf
+       line: |
+           nameserver {{ item.value.ip }}
+  with_dict: "{{ DnsServer }}"
   when: "{{ general_config.setdns }}"
   tags:
     - setdns
@@ -40,8 +41,12 @@
   when: "{{ general_config.tunetcp }}"
 
 - name: ---- Disable ipv6 ----
-  shell: |
-    echo "net.ipv6.conf.all.disable_ipv6 = 1" | tee -a /etc/sysctl.conf
-    echo "net.ipv6.conf.default.disable_ipv6 = 1" | tee -a /etc/sysctl.conf
-    sysctl -p
-  when: "{{ general_config.disableipv6 }}"    
+  blockinfile:
+    path: /etc/sysctl.conf
+    state: present
+    block: |
+        net.ipv6.conf.all.disable_ipv6 = 1
+        net.ipv6.conf.default.disable_ipv6 = 1
+  when: "{{ general_config.disableipv6 }}"
+          
+  

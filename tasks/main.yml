@@ -1,48 +1,47 @@
 ---
 - block:
-  
-      
-  - include_tasks: create-repo.yml
+        
+  - include: create-repo.yml
     when: "{{ general_config.create_repo }}"
     tags:
       - create_repo
   
-  - include_tasks: update-kernel.yml
+  - include: update-kernel.yml
     when: "{{ general_config.update_kernel }}"
     tags:
       - update_kernel
   
-  - include_tasks: install-package.yml
+  - include: install-package.yml
     when: "{{general_config.install_package}}"
     tags:
       - package_install
   
-  - include_tasks: create-users.yml
+  - include: create-users.yml
     when: "{{general_config.create_users}}"
     tags:
        - create_users
 
-  - include_tasks: network-config.yml
+  - include: network-config.yml
     when: "{{ general_config.network_config }}"
-    tags:
+    tags: 
       - network_config
 
-  - include_tasks: install-zabbix-agent.yml
+  - include: install-zabbix-agent.yml
     when: "{{ general_config.install_zabbix_agent }}"
     tags:
       - install_zabbix_agent
 
-  - include_tasks:  install-java.yml
+  - include:  install-java.yml
     when: "{{ general_config.install_java }}"
     tags:
       - install_java
   
-  - include_tasks: install-docker.yml
+  - include: install-docker.yml
     when: "{{ general_config.install_docker }}"
     tags:
       - install_docker
 
-  - include_tasks: install-chronyd.yml
+  - include: install-chronyd.yml
     when: "{{ general_config.install_chrony }}"
     tags:
       - install_chrony

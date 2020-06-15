@@ -16,6 +16,7 @@
        - "bind-utils"
        - "wget"
        - "net-tools"
+       - "vim"
   tags:
     - package_install 
 
