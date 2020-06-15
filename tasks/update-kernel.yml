@@ -1,0 +1,21 @@
+---
+
+- name: --- install chronyd ---
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+       - "kernel-ml"
+  when: "{{ general_config.update_kernel }}"
+  tags:
+    - update_kernel
+
+- name: --- install chronyd ---
+  shell: |
+     yum -y swap kernel-headers -- kernel-ml-headers
+     yum -y swap kernel-tools-libs -- kernel-ml-tools-libs
+     yum -y install kernel-ml-tools
+     yum -y swap kernel-devel -- kernel-ml-devel
+  when: "{{ general_config.update_kernel }}"
+  tags:
+    - update_kernel

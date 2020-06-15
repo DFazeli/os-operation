@@ -19,6 +19,7 @@ general_config:
   install_chrony: true
   install_package: true
   install_docker: true
+  update_kernel: true
 
 repository:
   repo1:
